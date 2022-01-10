@@ -46,6 +46,9 @@ _C.MODEL = CN()
 _C.MODEL.TYPE = 'swin'
 # Model name
 _C.MODEL.NAME = 'swin_tiny_patch4_window7_224'
+# Pretrained weight from checkpoint, could be imagenet22k pretrained weight
+# could be overwritten by command line argument
+_C.MODEL.PRETRAINED = ''
 # Checkpoint to resume, could be overwritten by command line argument
 _C.MODEL.RESUME = ''
 # Number of classes, overwritten in data preparation
@@ -70,6 +73,18 @@ _C.MODEL.SWIN.QKV_BIAS = True
 _C.MODEL.SWIN.QK_SCALE = None
 _C.MODEL.SWIN.APE = False
 _C.MODEL.SWIN.PATCH_NORM = True
+
+# Swin MLP parameters
+_C.MODEL.SWIN_MLP = CN()
+_C.MODEL.SWIN_MLP.PATCH_SIZE = 4
+_C.MODEL.SWIN_MLP.IN_CHANS = 3
+_C.MODEL.SWIN_MLP.EMBED_DIM = 96
+_C.MODEL.SWIN_MLP.DEPTHS = [2, 2, 6, 2]
+_C.MODEL.SWIN_MLP.NUM_HEADS = [3, 6, 12, 24]
+_C.MODEL.SWIN_MLP.WINDOW_SIZE = 7
+_C.MODEL.SWIN_MLP.MLP_RATIO = 4.
+_C.MODEL.SWIN_MLP.APE = False
+_C.MODEL.SWIN_MLP.PATCH_NORM = True
 
 # -----------------------------------------------------------------------------
 # Training settings
@@ -144,6 +159,8 @@ _C.AUG.MIXUP_MODE = 'batch'
 _C.TEST = CN()
 # Whether to use center crop when testing
 _C.TEST.CROP = True
+# Whether to use SequentialSampler as validation sampler
+_C.TEST.SEQUENTIAL = False
 
 # -----------------------------------------------------------------------------
 # Misc
@@ -200,6 +217,8 @@ def update_config(config, args):
         config.DATA.ZIP_MODE = True
     if args.cache_mode:
         config.DATA.CACHE_MODE = args.cache_mode
+    if args.pretrained:
+        config.MODEL.PRETRAINED = args.pretrained
     if args.resume:
         config.MODEL.RESUME = args.resume
     if args.accumulation_steps:
